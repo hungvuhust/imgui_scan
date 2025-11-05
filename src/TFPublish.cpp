@@ -26,8 +26,8 @@ void TFPublish::publishTransforms(double fx,
 }
 
 geometry_msgs::msg::TransformStamped TFPublish::createTransform(
-  const std::string& parent_frame,
-  const std::string& child_frame,
+  const std::string &parent_frame,
+  const std::string &child_frame,
   double             x,
   double             y,
   double             z,

@@ -13,11 +13,9 @@ std::shared_ptr<TFPublish> g_tf_publisher =
   nullptr;  // Global pointer cho TF publisher
 
 // Biến để lưu giá trị từ slider
-static float g_fx   = 0.0f;
-static float g_fy   = 0.0f;
+static float g_x    = 0.0f;
+static float g_y    = 0.0f;
 static float g_fyaw = 0.0f;
-static float g_rx   = 0.0f;
-static float g_ry   = 0.0f;
 static float g_ryaw = 0.0f;
 
 // Callback function để render GUI
@@ -26,31 +24,42 @@ void RenderGUI() {
   ImGui::Begin("imgui_scan");
   ImGui::Text("TF Transform Publisher");
 
-  // Sliders cho x, y, yaw
-  ImGui::SliderFloat("Front X", &g_fx, -1.0f, 1.0f);
-  ImGui::SliderFloat("Front Y", &g_fy, -1.0f, 1.0f);
-  ImGui::SliderFloat("Front Yaw (rad)", &g_fyaw, -3.14159f, 3.14159f);
-  ImGui::SliderFloat("Rear X", &g_rx, -1.0f, 1.0f);
-  ImGui::SliderFloat("Rear Y", &g_ry, -1.0f, 1.0f);
-  ImGui::SliderFloat("Rear Yaw (rad)", &g_ryaw, -3.14159f, 3.14159f);
+  ImGui::Text("Transform:");
+  ImGui::PushItemWidth(100);
+  ImGui::InputFloat("X", &g_x, 0.01f, 0.1f, "%.3f");
+  ImGui::SameLine();
+  ImGui::SliderFloat("## X Slider", &g_x, -1.0f, 1.0f);
 
-  // Hiển thị giá trị hiện tại
-  ImGui::Text("Current values: Front X=%.3f, Front Y=%.3f, Front Yaw=%.3f",
-              g_fx,
-              g_fy,
-              g_fyaw);
-  ImGui::Text("Current values: Rear X=%.3f, Rear Y=%.3f, Rear Yaw=%.3f",
-              g_rx,
-              g_ry,
-              g_ryaw);
+  ImGui::InputFloat("Y", &g_y, 0.01f, 0.1f, "%.3f");
+  ImGui::SameLine();
+  ImGui::SliderFloat("## Y Slider", &g_y, -1.0f, 1.0f);
+  // Front scan transforms
+  ImGui::Text("Front Scan Transform:");
+  ImGui::PushItemWidth(100);
+
+  ImGui::InputFloat("Front Yaw (rad)", &g_fyaw, 0.01f, 0.1f, "%.3f");
+  ImGui::SameLine();
+  ImGui::SliderFloat("##Front Yaw Slider", &g_fyaw, -3.14159f, 3.14159f);
+  ImGui::PopItemWidth();
+
+  ImGui::Separator();
+
+  // Rear scan transforms
+  ImGui::Text("Rear Scan Transform:");
+  ImGui::PushItemWidth(100);
+
+  ImGui::InputFloat("Rear Yaw (rad)", &g_ryaw, 0.01f, 0.1f, "%.3f");
+  ImGui::SameLine();
+  ImGui::SliderFloat("##Rear Yaw Slider", &g_ryaw, -3.14159f, 3.14159f);
+  ImGui::PopItemWidth();
 
   // Publish transforms khi có thay đổi
   if (g_tf_publisher) {
-    g_tf_publisher->publishTransforms(static_cast<double>(g_fx),
-                                      static_cast<double>(g_fy),
+    g_tf_publisher->publishTransforms(static_cast<double>(g_x),
+                                      static_cast<double>(-g_y),
                                       static_cast<double>(g_fyaw),
-                                      static_cast<double>(g_rx),
-                                      static_cast<double>(g_ry),
+                                      static_cast<double>(-g_x),
+                                      static_cast<double>(g_y),
                                       static_cast<double>(g_ryaw));
   }
 
